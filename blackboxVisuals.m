@@ -32,6 +32,9 @@ plot(timeS, blackboxData.gyroPitchSetpoint, 'G');
 hold off
 xtickformat('%.2f')
 legend('Raw', 'Filt', 'Set');
+title('Pitch Rate vs Time')
+ylabel('Pitch Rate (millidegrees/s)')
+xlabel('Time (s)')
 
 
 figure('Name', 'Roll')

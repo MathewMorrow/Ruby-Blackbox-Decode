@@ -54,6 +54,7 @@ xline(dterm_lpf1, 'g--', 'LineWidth', 0.5, 'Label', 'Dterm LPF1');
 xline(dterm_lpf2, 'g--', 'LineWidth', 0.5, 'Label', 'Dterm LPF2');
 hold off
 title("Complex Magnitude of FFT Spectrum")
+legend('Raw Gyro Data','Filtered Gyro Data')
 xlabel("f (Hz)")
 ylabel("|fft(X)|")
 xlim([0 700])
@@ -85,6 +86,7 @@ xline(dterm_lpf1, 'g--', 'LineWidth', 0.5, 'Label', 'Dterm LPF1');
 xline(dterm_lpf2, 'g--', 'LineWidth', 0.5, 'Label', 'Dterm LPF2');
 hold off
 title("Complex Magnitude of FFT Spectrum")
+legend('Raw Gyro Data','Filtered Gyro Data')
 xlabel("f (Hz)")
 ylabel("|fft(X)|")
 xlim([0 700])

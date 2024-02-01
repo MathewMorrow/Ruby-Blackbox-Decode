@@ -7,6 +7,10 @@ tic
 % MATLAB is amorphous on type -- everything is stored as the type of the RHS on assignment unless directly addressing the element of an existing array of a particular type.
 % There's no concept of defining the type of the field of a struct; it takes on the type of the object stored in it on assignment.
 
+% The 'fileInfo = dir(fileToOpen)' get grumpy if the fileToOpen is not in the main directory.
+% fileInfo not required but nice to show after opening to estimate file
+% size and decode loading bar estimate.
+
 % File constants
 endOfHeaderStr = "$$ end of header";
 
