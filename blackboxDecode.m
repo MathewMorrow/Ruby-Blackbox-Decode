@@ -57,6 +57,9 @@ verticalSpeedScale = 1;
 
 %% Open the .txt file
 fileToOpen = uigetfile('*.txt');
+if fileToOpen == 0
+    error('No File Selected');
+end
 disp('Opening File')
 [fileID, errmsg] = fopen(fileToOpen, "r", "s");
 disp(errmsg);
