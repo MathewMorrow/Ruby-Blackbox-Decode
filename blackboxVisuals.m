@@ -33,7 +33,7 @@ hold off
 xtickformat('%.2f')
 legend('Raw', 'Filt', 'Set');
 title('Pitch Rate vs Time')
-ylabel('Pitch Rate (millidegrees/s)')
+ylabel('Pitch Rate (degrees/s)')
 xlabel('Time (s)')
 
 
@@ -44,6 +44,9 @@ plot(timeS, blackboxData.gyroRollFilt, 'B');
 plot(timeS, blackboxData.gyroRollSetpoint, 'G');
 hold off
 legend('Raw', 'Filt', 'Set');
+title('Pitch Rate vs Time')
+ylabel('Pitch Rate (degrees/s)')
+xlabel('Time (s)')
 
 
 figure('Name', 'Yaw')
@@ -53,6 +56,9 @@ plot(timeS, blackboxData.gyroYawFilt, 'B');
 plot(timeS, blackboxData.gyroYawSetpoint, 'G');
 hold off
 legend('Raw', 'Filt', 'Set');
+title('Pitch Rate vs Time')
+ylabel('Pitch Rate (degrees/s)')
+xlabel('Time (s)')
 
 
 %% Plot Pitch PID
@@ -78,6 +84,9 @@ plot(timeS, blackboxData.rollI);
 plot(timeS, blackboxData.rollD);
 hold off
 legend('P', 'I', 'D');
+title(' Roll P,I,D Outputs vs Time')
+ylabel('P,I,D outputs as motor throttle (%)')
+xlabel('Time (s)')
 
 %% Plot Roll PID total
 figure('Name', 'Roll PID')
