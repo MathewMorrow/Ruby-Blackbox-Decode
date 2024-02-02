@@ -10,24 +10,24 @@ This hardware+firmware project represent 500+ hours of my time outside of my day
 Once I have more thoroughly documented and cleaned up the project I will make it public.
  
 ## Background preamble
-The simplest way to write data to log file is .csv format. After opening a new file the first row entry can be a CSV header and subsequent data logs will be written for each column.
+The simplest way to write data to a log file is .csv format. After opening a new file the first row entry can be a CSV header and subsequent data logs will be written for each column.
 This method allows for easy data analysis in excel, google-sheets or even a text editor with no decoding required.
-The downside to this method is that the data written to the .csv file is not the original INT/UINT/FLOAT **it is an ASCII representation of the number** which means the MCU writing the data to the storage device need to convert every number being logged to an ASCII representation of the number. Not only does this take a significant number of clock cycles to complete it also takes A LOT more memory on the storage device eg. a uint16_t of 2 bytes can take up to 5 bytes in ASCII form and an float... just don't log floats unless absolutely necessary.
+The downside to this method is that the data written to the .csv file is not the original INT/UINT/FLOAT **it is an ASCII representation of the number** which means the MCU writing the data to the storage device need to convert every number being logged to an ASCII representation of the number. Not only does this take a significant number of clock cycles to complete it also takes A LOT more memory on the storage device eg. a uint16_t of 2 bytes can take up to 5 bytes in ASCII form and a float... just don't log floats unless absolutely necessary.
 
-The alternative is to log raw binary (the original INT/UINT) values to the log file. However, when you open up the file in you text editor of choice you will be greeted with...
-
+The alternative is to log raw binary (the original INT/UINT) values to the log file. However, when you open up the file in your text editor of choice you will be greeted with...
+```  
 þ|ÿÕSOF ºóA     ÿþÿþ  ÿÏÿÙ  ÿýÿã        þ{ÿÕSOF ºõº     ÿÿ  ÿÓÿÕ  ÿøÿãÿý    þzÿÕSOF ºø2         
 ÿâÿÕ  ÿóÿãÿø      þyÿÕSOF ºú«         ÿòÿÙ  ÿðÿãÿòÿý ÿþ þxÿÕSOF ºý&ÿÿ   ÿõ    ÿýÿà  ÿòÿãÿï  ÿü   
-
-This is because the bytes in the file are not ASCII chars that the text editor or CSV editor are expecting.  
-The only way to get the data from the log file is extract each raw BYTE/INT/UINT using a decoder that knows exactly the order and format of each piece of data in the log file.
+```  
+This is because the raw bytes in the file are not ASCII chars that the text editor or CSV editor are expecting.  
+The only way to get the data from the log file is extracting each raw BYTE/INT/UINT using a decoder that knows exactly the order and format of each piece of data in the log file.
 
 ## How the code works 
 
 **File Header**  
 * It's nice to have some human readable text at the beginning of a file, such as PID gain, filter cutoffs, that can be quickly checked and compared to other log files without having to decode every time.  
 * When I first power on my drone I don't care if it takes 10ms, 50ms or even 100ms to write an ASCII header file with information about by drone settings.
-* After the all of the header data is written I write a new line that represent the end of the header "$$ end of header"
+* After all of the header data is written, a new line that represent the end of the header "$$ end of header" is written to the file.
 * The decoder reads through every line until it reaches the "$$ end of header" and pulls out metadata and other information about the file/drone that will be used later.
 ```
 pitch_PID: 0.002800 0.002800 0.000018  
@@ -44,23 +44,23 @@ $$ end of header
 * Every new frame is started with a start-of-frame indicator.
     * This can be as simple as a single char/byte but should be at least two or three chars/bytes to reduce the chances of erroneous SOF flags.
     * I decided to use 3 bytes representing the chars 'SOF'.
-* After the 'SOF' marker, the decoder is hard coded to know exactly what data type, scaling and order every value is in the entire frame.
+* After the 'SOF' marker, the decoder algorithm knows exactly how many values and the data type, scaling and order of every value in the frame.
     * The first value is always the timestamp of the data in microseconds since power on.
-* The decoder pulls out every value in the frame, scales it appropriately and puts it into shadow register.
+* The decoder pulls out every value in the frame, scales it appropriately and puts it into a temporary holding register.
 ```
 'SOF'UINT32INT16INT16INT16UINT16UINT16......'SOF'
 ```
 
 **Data Integrity**
-* Before appending the data to an array of timestamped logs, the decoder immediately checks if the next 'SOF' marker is found.
+* Before appending the new timestamped data to the working array, the decoder immediately checks if the next 'SOF' marker is found.
     * If it is found, the data is appended to the working array of data.
-    * If not found, the data is thrown away and the file pointer is moved back to the END of the last 'SOF' marker and it read the file until the next 'SOF' is found.
-    * For each case a counter is incremented for good frames and bad frames -- I was shocked by the results.
+    * If not found, the data is thrown away and the file pointer is moved back to the END of the last 'SOF' marker and it reads the file until the next 'SOF' is found.
+    * For each case, a counter is incremented for good frames and bad frames -- I was shocked by the results!
  
 **Results**
 * Near perfect binary data logging. An 11 minute, 45Mb log of 1,046,638 successful frames decoded with 0 failed frames.
-* The pessimist might think "well your code might not be correctly catching fails frames".
-    * Rarely but sometimes even on a 2 minute flight there may be 1-2 failed frames out of ~200k.
+* The pessimist might think "well your code might not be correctly catching failed frames".
+    * It does!!! Rarely but sometimes, even on a short flight, there may be 1-2 failed frames out of ~200k.
 ```
 >> logInfo  
 logInfo =  
