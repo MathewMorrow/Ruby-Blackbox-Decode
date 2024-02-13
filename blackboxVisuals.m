@@ -96,16 +96,16 @@ hold off
 
 %% Plot Altitude
 figure('Name', 'Altitude')
-% hold on
-% plot(timeS, blackboxData.altitude);
-% hold off
 
 subplot(2, 1, 1);
 plot(timeS, blackboxData.altitude);
 title 'Altitude (cm)'
 
 subplot(2,1,2)
+hold on 
 plot(timeS, blackboxData.throttle);
+plot(timeS, blackboxData.RcThrottle);
+hold off
 title 'Throtte'
 
 %% Plot Throttle
@@ -122,4 +122,33 @@ hold on
 plot(timeS, blackboxData.verticalSpeed);
 hold off
 legend('From Acc');
+
+%% Plot All Speed
+figure('Name', 'Vertical Speed')
+hold on
+plot(timeS, blackboxData.verticalSpeed);
+plot(timeS, blackboxData.verticalSpeedAcc)
+plot(timeS, blackboxData.verticalSpeedBaro)
+hold off
+legend('Vert Speed', 'Vert Speed Acc', 'Vert Speed Baro');
+
+%% Plot Acceleration Z axis
+figure('Name', 'Acceleration')
+hold on
+plot(timeS, blackboxData.AccZFiltered);
+hold off
+legend('Z-Axis');
+
+%% Plot Altitude + Verticqal Speed
+figure('Name', 'Altitude and Speed')
+
+subplot(2, 1, 1);
+plot(timeS, blackboxData.altitude);
+title 'Altitude (cm)'
+
+subplot(2,1,2)
+hold on 
+plot(timeS, blackboxData.verticalSpeed);
+hold off
+title 'Speed'
 

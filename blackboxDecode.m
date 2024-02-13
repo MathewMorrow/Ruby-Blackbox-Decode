@@ -49,8 +49,6 @@ blackboxStruct = struct(...
     'altitude', zeros(1,preAllocBytes),...
     'verticalSpeed', zeros(1,preAllocBytes),...
     'RcThrottle', zeros(1,preAllocBytes),...         % Altitude Frame
-    'altitudeFiltered', zeros(1,preAllocBytes),...
-    'verticalSpeed', zeros(1,preAllocBytes),...
     'verticalSpeedAcc', zeros(1,preAllocBytes),...
     'verticalSpeedBaro', zeros(1,preAllocBytes),...
     'AccZFiltered', zeros(1,preAllocBytes)...
@@ -65,8 +63,9 @@ numFrameFails = 0; % Stores the number of failed frames
 gyroRatesScale = 1/20.0;
 pidScale = 1/30000.0;
 throttleScale = 1/1000;
-altitudeScale = 1/100;  % This is causing int16 overflow!! Change scale to 1 max. Change in FC FW as well
-verticalSpeedScale = 1;
+altitudeScale = 1;  % This is causing int16 overflow!! Change scale to 1 max. Change in FC FW as well
+verticalSpeedScale = 1/10;
+accelScale = 1/2000;
 
 %% Open the .txt file
 fileToOpen = uigetfile('*.txt');
@@ -171,7 +170,7 @@ while ~feof(fileID)
     bytesRead = bytesRead + 1;
     frameType = fread(fileID, 1, 'uint8');
     
-    if frameType ==                         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% go to sleep now
+    if frameType == FRAME_TYPE_GYRO
     % Read 12 uint16 values
     bytesRead = bytesRead + 2*18;
     gyroPitchRaw = fread(fileID, 1, 'int16');
@@ -193,6 +192,15 @@ while ~feof(fileID)
     altitude = fread(fileID, 1, 'int16');
     verticalSpeed = fread(fileID, 1, 'int16');
 
+    elseif frameType == FRAME_TYPE_ALTITUDE 
+    rcThrottle = fread(fileID, 1, 'uint16');
+    altitude = fread(fileID, 1, 'int16');
+    verticalSpeed = fread(fileID, 1, 'int16');
+    verticalSpeedAccel = fread(fileID, 1, 'int16');
+    verticalSpeedBaro = fread(fileID, 1, 'int16');
+    accelZ = fread(fileID, 1, 'int16');
+    end
+
     % Done reading frame
     % Check emmediatly for the next start-of-frame
     nextSOF = [];
@@ -209,26 +217,37 @@ while ~feof(fileID)
         frameIndex = frameIndex + 1;
         % Set the start-of-frame flag so the next loop can skip
         sofFound = 1;
-        % Append to import
+        % Extract mircors timestamp
         blackboxData.TimeuS(frameIndex) = TimeuS;
-        blackboxData.gyroPitchRaw(frameIndex) = (gyroPitchRaw * gyroRatesScale);
-        blackboxData.gyroPitchFilt(frameIndex) = (gyroPitchFilt * gyroRatesScale);
-        blackboxData.gyroPitchSetpoint(frameIndex) = (gyroPitchSetpoint * gyroRatesScale);
-        blackboxData.gyroRollRaw(frameIndex) = (gyroRollRaw * gyroRatesScale);
-        blackboxData.gyroRollFilt(frameIndex) = (gyroRollFilt * gyroRatesScale);
-        blackboxData.gyroRollSetpoint(frameIndex) = (gyroRollSetpoint * gyroRatesScale);
-        blackboxData.gyroYawRaw(frameIndex) = (gyroYawRaw * gyroRatesScale);
-        blackboxData.gyroYawFilt(frameIndex) = (gyroYawFilt * gyroRatesScale);
-        blackboxData.gyroYawSetpoint(frameIndex) = (gyroYawSetpoint * gyroRatesScale);
-        blackboxData.pitchP(frameIndex) = (pitchP * pidScale);
-        blackboxData.pitchI(frameIndex) = (pitchI * pidScale);
-        blackboxData.pitchD(frameIndex) = (pitchD * pidScale);
-        blackboxData.rollP(frameIndex) = (rollP * pidScale);
-        blackboxData.rollI(frameIndex) = (rollI * pidScale);
-        blackboxData.rollD(frameIndex) = (rollD * pidScale);
-        blackboxData.throttle(frameIndex) = (throttle * throttleScale);
-        blackboxData.altitude(frameIndex) = (altitude * altitudeScale);
-        blackboxData.verticalSpeed(frameIndex) = (verticalSpeed * verticalSpeedScale);
+        % Append to import
+        if frameType == FRAME_TYPE_GYRO
+            blackboxData.gyroPitchRaw(frameIndex) = (gyroPitchRaw * gyroRatesScale);
+            blackboxData.gyroPitchFilt(frameIndex) = (gyroPitchFilt * gyroRatesScale);
+            blackboxData.gyroPitchSetpoint(frameIndex) = (gyroPitchSetpoint * gyroRatesScale);
+            blackboxData.gyroRollRaw(frameIndex) = (gyroRollRaw * gyroRatesScale);
+            blackboxData.gyroRollFilt(frameIndex) = (gyroRollFilt * gyroRatesScale);
+            blackboxData.gyroRollSetpoint(frameIndex) = (gyroRollSetpoint * gyroRatesScale);
+            blackboxData.gyroYawRaw(frameIndex) = (gyroYawRaw * gyroRatesScale);
+            blackboxData.gyroYawFilt(frameIndex) = (gyroYawFilt * gyroRatesScale);
+            blackboxData.gyroYawSetpoint(frameIndex) = (gyroYawSetpoint * gyroRatesScale);
+            blackboxData.pitchP(frameIndex) = (pitchP * pidScale);
+            blackboxData.pitchI(frameIndex) = (pitchI * pidScale);
+            blackboxData.pitchD(frameIndex) = (pitchD * pidScale);
+            blackboxData.rollP(frameIndex) = (rollP * pidScale);
+            blackboxData.rollI(frameIndex) = (rollI * pidScale);
+            blackboxData.rollD(frameIndex) = (rollD * pidScale);
+            blackboxData.throttle(frameIndex) = (throttle * throttleScale);
+            blackboxData.altitude(frameIndex) = (altitude * altitudeScale);
+            blackboxData.verticalSpeed(frameIndex) = (verticalSpeed * verticalSpeedScale);
+            
+        elseif frameType == FRAME_TYPE_ALTITUDE
+            blackboxData.RcThrottle(frameIndex) = (rcThrottle * throttleScale);
+            blackboxData.altitude(frameIndex) = (altitude * altitudeScale);
+            blackboxData.verticalSpeed(frameIndex) = (verticalSpeed * verticalSpeedScale);
+            blackboxData.verticalSpeedAcc(frameIndex) = (verticalSpeedAccel * verticalSpeedScale);
+            blackboxData.verticalSpeedBaro(frameIndex) = (verticalSpeedBaro * verticalSpeedScale);
+            blackboxData.AccZFiltered(frameIndex) = (accelZ * accelScale);
+        end
 
     % Issue with frame. Ignore it and set file pointer back and try again
     elseif ~feof(fileID)
@@ -266,6 +285,10 @@ blackboxData.rollD = blackboxData.rollD(1,1:frameIndex);
 blackboxData.throttle = blackboxData.throttle(1,1:frameIndex);
 blackboxData.altitude = blackboxData.altitude(1,1:frameIndex);
 blackboxData.verticalSpeed = blackboxData.verticalSpeed(1,1:frameIndex);
+blackboxData.RcThrottle = blackboxData.RcThrottle(1,1:frameIndex);
+blackboxData.verticalSpeedAcc = blackboxData.verticalSpeedAcc(1,1:frameIndex);
+blackboxData.verticalSpeedBaro = blackboxData.verticalSpeedBaro(1,1:frameIndex);
+blackboxData.AccZFiltered = blackboxData.AccZFiltered(1,1:frameIndex);
 
 
 close(displayDecode);
