@@ -14,6 +14,16 @@ title 'Log Time'
 xlabel 'Log Index'
 ylabel 'Flight Time (s)'
 
+loopTimePercentError = zeros(1,frameIndex-1);
+for k = 1:frameIndex-1
+    loopTimePercentError(1,k) = 100*(1-logdT(1,k)/(2*317));
+end
+
+figure('Name', 'Log Rate Error %')
+plot(loopTimePercentError);
+title 'Log Rate Error %'
+ylabel 'Log Rate Error (%)'
+
 %% Plot Raw Micros
 
 figure('Name', 'TimeuS')
