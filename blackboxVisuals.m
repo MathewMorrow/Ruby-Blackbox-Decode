@@ -23,6 +23,7 @@ figure('Name', 'Log Rate Error %')
 plot(loopTimePercentError);
 title 'Log Rate Error %'
 ylabel 'Log Rate Error (%)'
+ylim([-100, 100])
 
 %% Plot Raw Micros
 

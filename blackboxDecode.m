@@ -315,6 +315,7 @@ for i = 1:frameIndex
     timeS(i) = (blackboxData.TimeuS(i) - blackboxData.TimeuS(1))/uSperS; 
 end
 logDurationS = timeS(frameIndex) - timeS(1);
+sampleFrequency = 1/(logDurationS/frameIndex);
 
 % Odd time jumps at log #1164 #1420 ~0.7384S and 0.900S
 logdT = zeros(1,(frameIndex-1));

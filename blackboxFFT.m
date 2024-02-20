@@ -1,5 +1,7 @@
 close all
 
+% Raw Gyro |FFT| value of 20,000 is a lot
+
 %% Time Domain Stats
 Fgyro = 3158;            % Gyro sampling frequency
 SampleDivider = 2;
