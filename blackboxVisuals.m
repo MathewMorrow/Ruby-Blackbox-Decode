@@ -87,6 +87,56 @@ hold on
 plot(timeS, pitchPID);
 hold off
 
+%% Plot Pitch PID and Gyro subplots
+
+figure('Name', 'Pitch Subplots')
+ax1 = subplot(2, 1, 1);
+hold on
+plot(timeS, blackboxData.gyroPitchRaw, 'R');
+plot(timeS, blackboxData.gyroPitchFilt, 'B');
+plot(timeS, blackboxData.gyroPitchSetpoint, 'G');
+hold off
+xtickformat('%.2f')
+legend('Raw', 'Filt', 'Set');
+title('Pitch Rate vs Time')
+ylabel('Pitch Rate (degrees/s)')
+xlabel('Time (s)')
+
+ax2 = subplot(2,1,2)
+hold on
+plot(timeS, blackboxData.pitchP, 'R');
+plot(timeS, blackboxData.pitchI, 'G');
+plot(timeS, blackboxData.pitchD, 'B');
+hold off
+legend('P', 'I', 'D');
+
+linkaxes([ax1,ax2],'x');
+
+%% Plot Roll PID and Gyro subplots
+
+figure('Name', 'Roll Subplots')
+ax1 = subplot(2, 1, 1);
+hold on,
+plot(timeS, blackboxData.gyroRollRaw, 'R');
+plot(timeS, blackboxData.gyroRollFilt, 'B');
+plot(timeS, blackboxData.gyroRollSetpoint, 'G');
+hold off
+xtickformat('%.2f')
+legend('Raw', 'Filt', 'Set');
+title('Roll Rate vs Time')
+ylabel('Roll Rate (degrees/s)')
+xlabel('Time (s)')
+
+ax2 = subplot(2,1,2)
+hold on
+plot(timeS, blackboxData.rollP, 'R');
+plot(timeS, blackboxData.rollI, 'G');
+plot(timeS, blackboxData.rollD, 'B');
+hold off
+legend('P', 'I', 'D');
+
+linkaxes([ax1,ax2],'x');
+
 %% Plot Roll PID
 figure('Name', 'Roll P.I.D')
 hold on

@@ -7,13 +7,12 @@ tic
 % MATLAB is amorphous on type -- everything is stored as the type of the RHS on assignment unless directly addressing the element of an existing array of a particular type.
 % There's no concept of defining the type of the field of a struct; it takes on the type of the object stored in it on assignment.
 
-% The 'fileInfo = dir(fileToOpen)' get grumpy if the fileToOpen is not in the main directory.
-% fileInfo not required but nice to show after opening to estimate file
-% size and decode loading bar estimate.
+% The 'fileInfo = dir(fileToOpen)' gets grumpy if the fileToOpen is not in the main directory.
+% fileInfo not required but nice to show after opening to estimate file size
 
-% File constants
+%% Script constants
+
 endOfHeaderStr = "$$ end of header";
-
 % Start of frame marker
 sofMarker = 'SOF';
 % Frame types
@@ -82,17 +81,16 @@ if fileID == -1
 end
 
 % Get file size
-
 % fileInfo = dir(string(sprintf('\\flightforflight\\%s', fileToOpen)))
 fileInfo = dir(fileToOpen)
 fileSizeBytes = fileInfo.bytes;
 fileSizeFramesEstimate = (fileSizeBytes - headerBytesSize) / frameBytesSize;
 
-%% Read the header until the end of the file header
+%% Read the header until the end of header string is found
 
 % Extract data from header
 for i = 1:100
-    % Read whole line of text
+    % Read an entire line of text at a time
     line = fgetl(fileID);
     if ~isempty(line)
         % Check if that line matches end-of-header string
@@ -143,6 +141,7 @@ for i = 1:100
 end
 
 %% Decode the raw binary data
+
 displayDecode = waitbar(0, 'Decoding Flight Log');
 disp('Starting File Data Import')
 sofFound = 0;

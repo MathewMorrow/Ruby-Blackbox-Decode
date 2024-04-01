@@ -1,9 +1,17 @@
+%% Params
+
+useMean = 1;
+
 %% Calculate step response for pitch
 [stepResp, stepT] = PTstepcalc(blackboxData.gyroPitchSetpoint, blackboxData.gyroPitchFilt, sampleFrequency/1000, 1);
 
 s = [];
 s = stepResp;
-stepPitch=mean(s);
+if useMean == 1
+    stepPitch=mean(s);
+else
+    stepPitch=s;
+end
 stepTPitch = stepT;
 
 %% Calculate step response for pitch
@@ -11,7 +19,11 @@ stepTPitch = stepT;
 
 s = [];
 s = stepResp;
-stepRoll=mean(s);
+if useMean == 1
+    stepRoll=mean(s);
+else
+    stepRoll=s;
+end
 stepTRoll = stepT;
 
 %% Calculate step response for pitch
@@ -19,7 +31,11 @@ stepTRoll = stepT;
 
 s = [];
 s = stepResp;
-stepYaw=mean(s);
+if useMean == 1
+    stepYaw=mean(s);
+else
+    stepYaw=s;
+end
 stepTYaw = stepT;
 
 %% Plot Step Response

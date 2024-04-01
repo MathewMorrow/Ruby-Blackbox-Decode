@@ -46,8 +46,8 @@ end
 
 figure('name', 'FFT Pitch')
 hold on 
-plot(Fs/L*(0:L-1),abs(fftgyroPitchRaw),"LineWidth",3)
-plot(Fs/L*(0:L-1),abs(fftgyroPitchFilt),"LineWidth",3)
+plot(Fs/L*(0:L-1),abs(fftgyroPitchRaw), "R", "LineWidth",3)
+plot(Fs/L*(0:L-1),abs(fftgyroPitchFilt), "B", "LineWidth",3)
 xline(gyro_lpf1, 'r--', 'LineWidth', 0.5, 'Label', 'Gyro LPF1');
 xline(gyro_notch_hz, 'b--', 'LineWidth', 0.5, 'Label', 'Gyro Notch Fc');
 xline(gyro_notch_hz - gyro_notch_w, 'b--', 'LineWidth', 0.25, 'Label', 'Gyro Notch +Wc');
@@ -78,8 +78,8 @@ end
 
 figure('name', 'FFT Roll')
 hold on 
-plot(Fs/L*(0:L-1),abs(fftgyroRollRaw),"LineWidth",3)
-plot(Fs/L*(0:L-1),abs(fftgyroRollFilt),"LineWidth",3)
+plot(Fs/L*(0:L-1),abs(fftgyroRollRaw), "R", "LineWidth",3)
+plot(Fs/L*(0:L-1),abs(fftgyroRollFilt), "B", "LineWidth",3)
 xline(gyro_lpf1, 'r--', 'LineWidth', 0.5, 'Label', 'Gyro LPF1');
 xline(gyro_notch_hz, 'b--', 'LineWidth', 0.5, 'Label', 'Gyro Notch Fc');
 xline(gyro_notch_hz - gyro_notch_w, 'b--', 'LineWidth', 0.25, 'Label', 'Gyro Notch +Wc');
