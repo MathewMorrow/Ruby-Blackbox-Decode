@@ -55,7 +55,7 @@ plot(timeS, blackboxData.gyroRollFilt, 'B');
 plot(timeS, blackboxData.gyroRollSetpoint, 'G');
 hold off
 legend('Raw', 'Filt', 'Set');
-title('Pitch Rate vs Time')
+title('Roll Rate vs Time')
 ylabel('Pitch Rate (degrees/s)')
 xlabel('Time (s)')
 
@@ -67,7 +67,7 @@ plot(timeS, blackboxData.gyroYawFilt, 'B');
 plot(timeS, blackboxData.gyroYawSetpoint, 'G');
 hold off
 legend('Raw', 'Filt', 'Set');
-title('Pitch Rate vs Time')
+title('Yaw Rate vs Time')
 ylabel('Pitch Rate (degrees/s)')
 xlabel('Time (s)')
 
@@ -87,6 +87,37 @@ hold on
 plot(timeS, pitchPID);
 hold off
 
+%% Subplots Pitch Gyro PIDs
+figure('Name', 'Pitch')
+% subplot(2,1,1)
+tiledlayout(2,1)
+ax1 = nexttile;
+hold on
+plot(timeS, blackboxData.gyroPitchRaw, 'R');
+plot(timeS, blackboxData.gyroPitchFilt, 'B');
+plot(timeS, blackboxData.gyroPitchSetpoint, 'G');
+hold off
+xtickformat('%.2f')
+legend('Raw', 'Filt', 'Set');
+title('Pitch Rate vs Time')
+ylabel('Pitch Rate (degrees/s)')
+xlabel('Time (s)')
+grid on
+
+% subplot(2,1,2)
+ax2 = nexttile;
+hold on
+plot(timeS, blackboxData.pitchP);
+plot(timeS, blackboxData.pitchI);
+plot(timeS, blackboxData.pitchD);
+hold off
+legend('P', 'I', 'D');
+ylabel('PID Outputs (throttle %)')
+xlabel('Time (s)')
+grid on
+
+linkaxes([ax1 ax2 ],'x')
+
 %% Plot Roll PID
 figure('Name', 'Roll P.I.D')
 hold on
@@ -104,6 +135,37 @@ figure('Name', 'Roll PID')
 hold on
 plot(timeS, rollPID);
 hold off
+
+%% Subplots Pitch Gyro PIDs
+figure('Name', 'Roll')
+% subplot(2,1,1)
+tiledlayout(2,1)
+ax1 = nexttile;
+hold on
+plot(timeS, blackboxData.gyroRollRaw, 'R');
+plot(timeS, blackboxData.gyroRollFilt, 'B');
+plot(timeS, blackboxData.gyroRollSetpoint, 'G');
+hold off
+xtickformat('%.2f')
+legend('Raw', 'Filt', 'Set');
+title('Roll Rate vs Time')
+ylabel('Roll Rate (degrees/s)')
+xlabel('Time (s)')
+grid on
+
+% subplot(2,1,2)
+ax2 = nexttile;
+hold on
+plot(timeS, blackboxData.rollP);
+plot(timeS, blackboxData.rollI);
+plot(timeS, blackboxData.rollD);
+hold off
+legend('P', 'I', 'D');
+ylabel('PID Outputs (throttle %)')
+xlabel('Time (s)')
+grid on
+
+linkaxes([ax1 ax2 ],'x')
 
 %% Plot Altitude
 figure('Name', 'Altitude')
